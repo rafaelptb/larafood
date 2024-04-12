@@ -1,6 +1,6 @@
-@csrf
-
 @include('admin.includes.alerts')
+
+@csrf
 
 <div class="form-group">
     <label>Nome:</label>
