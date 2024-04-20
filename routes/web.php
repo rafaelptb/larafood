@@ -1,11 +1,23 @@
 <?php
 
-Route::prefix('admin')->namespace('Admin')->group(function(){
+Route::prefix('admin')->namespace('Admin')->middleware('auth')
+        ->group(function(){
+    
+    /**
+     * Routes Plan x Profile
+     */
+    Route::get('plan/{id}/profile/{idProfile}/detach', 'ACL\PlanProfileController@detachPlanProfile')->name('plan.profile.detach');
+    Route::post('plan/{id}/profiles', 'ACL\PlanProfileController@attachProfilesProfile')->name('plan.profiles.attach');
+    Route::any('plan/{id}/profiles/search', 'ACL\PlanProfileController@filterProfilesAvailable')->name('plan.profiles.available.search');
+    Route::get('plan/{id}/profiles/create', 'ACL\PlanProfileController@profilesAvailable')->name('plan.profiles.available');
+    Route::get('plan/{id}/profiles', 'ACL\PlanProfileController@profiles')->name('plan.profiles');
     
     /**
      * Routes Permission x Profile
      */
+    Route::get('profile/{id}/permission/{idPermission}/detach', 'ACL\PermissionProfileController@detachPermissionProfile')->name('profile.permission.detach');
     Route::post('profile/{id}/permissions', 'ACL\PermissionProfileController@attachPermissionsProfile')->name('profile.permissions.attach');
+    Route::any('profile/{id}/permissions/search', 'ACL\PermissionProfileController@filterPermissionsAvailable')->name('profile.permissions.available.search');
     Route::get('profile/{id}/permissions/create', 'ACL\PermissionProfileController@permissionsAvailable')->name('profile.permissions.available');
     Route::get('profile/{id}/permissions', 'ACL\PermissionProfileController@permissions')->name('profile.permissions');
     
@@ -25,12 +37,11 @@ Route::prefix('admin')->namespace('Admin')->group(function(){
      * Routes Details Plans
      */
     Route::delete('plans/{url}/details/{idDetail}', 'DetailPlanController@destroy')->name('details.plan.destroy');
+    Route::get('plans/{url}/details/create', 'DetailPlanController@create')->name('details.plan.create');
     Route::get('plans/{url}/details/{idDetail}', 'DetailPlanController@show')->name('details.plan.show');
     Route::put('plans/{url}/details/{idDetail}', 'DetailPlanController@update')->name('details.plan.update');
     Route::get('plans/{url}/details/{idDetail}/edit', 'DetailPlanController@edit')->name('details.plan.edit');
-    Route::get('plans/{url}/details/create', 'DetailPlanController@create')->name('details.plan.create');
     Route::post('plans/{url}/details', 'DetailPlanController@store')->name('details.plan.store');
-    Route::get('plans/{url}/details/create', 'DetailPlanController@create')->name('details.plan.create');
     Route::get('plans/{url}/details', 'DetailPlanController@index')->name('details.plan.index');
     
     /**
@@ -52,6 +63,14 @@ Route::prefix('admin')->namespace('Admin')->group(function(){
     
 });
 
-Route::get('/', function () {
-    return view('welcome');
-});
+/**
+* Site Routes
+*/
+
+Route::get('/plan/{url}', 'Site\SiteController@plan')->name('plan.subscription');
+Route::get('/', 'Site\SiteController@index')->name('site.home');
+
+/**
+* Auth Routes
+*/
+Auth::routes();

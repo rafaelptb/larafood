@@ -13,9 +13,19 @@ class Plan extends Model
         'description'
     ];
     
+    public function profiles()
+    {
+        return $this->belongsToMany(Profile::class);
+    }
+    
     public function details()
     {
         return $this->hasMany(DetailPlan::class);
+    }
+    
+    public function tenants()
+    {
+        return $this->hasMany(Tenant::class);
     }
     
     public function search($filter = null)
@@ -25,5 +35,22 @@ class Plan extends Model
                 ->paginate();
         
         return $results;
+    }
+    
+    public function profilesAvailable($filter = null)
+    {
+        
+        $profiles = Profile::whereNotIn('profiles.id', function ($query){
+                $query->select('plan_profile.profile_id');
+                $query->from('plan_profile');
+                $query->whereRaw("plan_profile.plan_id = {$this->id}");
+            })->where(function ($queryFilter) use($filter){
+                if ($filter){
+                    $queryFilter->where('profiles.name', 'LIKE', "%{$filter}%");
+                    $queryFilter->orWhere('profiles.description', 'LIKE', "%{$filter}%");
+                }
+            })->paginate();
+        
+        return $profiles;
     }
 }
