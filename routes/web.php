@@ -4,6 +4,12 @@ Route::prefix('admin')->namespace('Admin')->middleware('auth')
         ->group(function(){
     
     /**
+     * Routes Users
+     */
+    Route::any('users/search', 'UserController@search')->name('users.search');
+    Route::resource('users', 'UserController');        
+            
+    /**
      * Routes Plan x Profile
      */
     Route::get('plan/{id}/profile/{idProfile}/detach', 'ACL\PlanProfileController@detachPlanProfile')->name('plan.profile.detach');
