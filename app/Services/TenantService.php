@@ -41,7 +41,7 @@ class TenantService{
     public function storeUser(Tenant $tenant)
     {
         $user = $tenant->users()->create([
-            'name' => $this->data['tenant'],
+            'name' => $this->data['name'],
             'email' => $this->data['email'],
             'password' => Hash::make($this->data['password']),
         ]);
